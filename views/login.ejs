@@ -1,0 +1,89 @@
+<%- include('header'); -%>
+
+<main>
+
+<div class="text-center">
+<!--
+
+
+-->
+
+<form method="post" action="/login" class="align-items-center" >
+<div class="mb-3">
+<h2>Login Here !</h2>   </div>
+ <div class="mb-3">
+ <label class="form-label">Email</label><br>
+ <input type="email" placeholder="enter your email" name="email1" required>
+
+ 
+ 
+ </div>
+ <div class="mb-3">
+ <label class="form-label">Password</label><br>
+ <input type="password" placeholder="Enter password" name="password1" required><br>
+
+ </div>
+ <div class="mb-3">
+ <button type="submit">Submit</button>
+ 
+ </div>
+
+</form>
+<div class="mb-3"><button onclick="window.location.href='/signup';">Sign Up</button> if not a member</div>
+
+</div>
+
+</main>
+
+
+
+
+
+
+
+
+
+
+
+
+<footer>
+<div class="text-center">
+<h3>Copyright © </h3><h3 id="year" ></h3>
+</div>
+
+
+<scrip src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></scrip>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+<script ></script>
+<script >
+
+document.getElementById("year").innerHTML = getYear();
+
+function getYear() {
+  const date = new Date();
+  var currentYear = date.getFullYear();
+
+  return currentYear;
+}
+
+
+</script>
+</footer>
+
+
+
+</body>
+
+
+
+
+</html>
+
+
+
+
+<%- include('footer'); -%>

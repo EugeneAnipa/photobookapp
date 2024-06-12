@@ -1,0 +1,23 @@
+body {
+  font-family: "An Apple", sans-serif;
+  background-color: #5c008a;
+  background-image: url("https://www.transparenttextures.com/patterns/black-linen.png");
+  color: white;
+}
+
+nav {
+  background-color: #5c008a;
+}
+
+main {
+  margin-top: 20vh;
+}
+
+footer {
+  margin-top: 20vh;
+  bottom: 0;
+}
+
+.country {
+  width: 190px !important;
+}

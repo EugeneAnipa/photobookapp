@@ -1,0 +1,63 @@
+<%- include('header'); -%>
+
+
+
+
+<main>
+
+<div class="text-center">
+<form method="post" action="/signup" class="align-items-center" >
+<div class="mb-3">
+<h2>Sign Up Here !</h2>   </div>
+ <div class="mb-3">
+ <label class="form-label">First Name</label><br>
+ <input type="type" placeholder="enter your first name" name="firstname" required>
+
+ 
+ 
+ </div>
+ <div class="mb-3">
+ <label class="form-label">Last Name</label><br>
+ <input type="text" placeholder="enter your last name" name="lastname" required>
+
+ 
+ 
+ </div>
+ <div class="mb-3">
+ <label class="form-label">Email</label><br>
+ <input type="email" placeholder="enter your email" name="email" required>
+
+ 
+ 
+ </div>
+ 
+ 
+ 
+ <div class="mb-3">
+ <label class="form-label">Password</label><br>
+ <input type="password" placeholder="Enter password" name="password"required><br>
+
+ </div>
+ 
+ <div class="mb-3">
+ <button type="submit">Register</button>
+ 
+ </div>
+
+</form>
+<div class="mb-3"><button onclick="window.location.href='/login';">login</button> if already a member</div>
+
+</div>
+
+</main>
+
+
+
+
+
+
+
+
+
+
+<%- include('footer'); -%>
