@@ -8,6 +8,12 @@ import fs from "node:fs";
 import morgan from "morgan";
 
 import mysql from "mysql";
+import { v2 as cloudinary } from "cloudinary";
+import bcrypt from "bcrypt";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import session from "express-session";
+import nocache from "nocache";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -15,17 +21,12 @@ const app = express();
 var accessLogStream = fs.createWriteStream((__dirname, "access.log"), {
   flags: "a",
 });
+
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(morgan("combined", { stream: accessLogStream }));
-
-import bcrypt from "bcrypt";
-import passport from "passport";
-import { Strategy } from "passport-local";
-import session from "express-session";
-import nocache from "nocache";
 
 const saltRounds = 10;
 
@@ -52,6 +53,14 @@ const loginappdb = mysql.createConnection({
   database: "loginapp",
 });
 loginappdb.connect();
+
+cloudinary.config({
+  cloud_name: "da7nhb6yj",
+  api_key: "169418963869343",
+  api_secret: "Eq5mQpc2JHG8dwOlnMFdrXvV6HUT",
+  secure: true,
+});
+
 app.get("/login", (req, res) => {
   console.log("this is the post login details" + req.match, req.user);
   res.render("login.ejs");
@@ -64,23 +73,85 @@ app.get("/dashboard", (req, res) => {
   if (req.isAuthenticated()) {
     var hereUSer = req.user;
     var hereUSerSql = "SELECT * FROM login WHERE email = ?";
+    var imageSql = "SELECT * FROM imagephotos WHERE email = ?";
+    var displayResultSql =
+      "SELECT login.email,login.firstname,login.avatar,imagephotos.photos  FROM login INNER JOIN imagephotos ON login.email=imagephotos.email;";
 
     console.log("here is the email" + req.user);
     console.log("here is hereUser " + hereUSer);
 
-    loginappdb.query(hereUSerSql, [hereUSer], function (err, hereResult) {
-      console.log(hereResult.length);
-      for (let a = 0; a < hereResult.length; a++) {
-        console.log(" first name inside for loop" + hereResult[a].firstname);
+    loginappdb.query(displayResultSql, [hereUSer], function (err, imageResult) {
+      for (let a = 0; a < imageResult.length; a++) {
+        /*
+                 if(err) {
+            res.status(500).end();
+          } else if (results.length === 0) {
+            res.status(404).end();
+          } else {
+              
+            res.json(results);
+          }
+
+
+          */
+
+        // Optimize delivery by resizing and applying auto-format and auto-quality
+        const optimizeUrl = cloudinary.url("shoes", {
+          fetch_format: "auto",
+          quality: "auto",
+        });
+        console.log("cloudinary is " + optimizeUrl);
+        console.log("for loop firstname " + imageResult[a].firstname);
+        console.log("for loop email " + imageResult[a].email);
+        console.log("for loop avatar " + imageResult[a].avatar);
+        console.log("for loop photos " + imageResult[a].photos);
+        var imageObject = Object.keys(imageResult[a].avatar).forEach(function (
+          key
+        ) {
+          var row = imageResult[a].avatar[key];
+          return row.avatar;
+        });
+
+        console.log(imageObject);
+        res.render("dashboard.ejs", {
+          UserEmail: imageResult[a].email,
+          UserFirstname: imageResult[a].firstname,
+          UserAvatar: optimizeUrl,
+        });
+      }
+    });
+
+    /*
+
+    loginappdb.query(imageSql, [hereUSer], function (err, imageResult) {
+      console.log("image result length is :" + imageResult.length);
+      for (let a = 0; a < imageResult.length; a++) {
+        console.log(" first name inside for loop" + imageResult[a]);
         console.log("inside for loop here is the email" + req.user);
         // res.render("dashboard.ejs", { UserMail: req.user });
 
-        res.render("dashboard.ejs", { UserMail: req.user });
-      }
+        /*
+        res.render("dashboard.ejs", {
+          UserMail: req.user,
+          UserPhoto: imageResult[a],
+        });
+
+        */
+    // }
+    /*
+      Object.keys(imageResult).forEach(function (key) {
+        var row = imageResult[key];
+        console.log(row.photos);
+        res.render("dashboard.ejs", {
+          UserFirstname: req.UserFirstname,
+          UserPhoto: row.photos,
+        });
+      });
+
       // res.render("dashboard.ejs", hereResult);
     });
-
-    // res.render("dashboard.ejs", { UserMail: req.user });
+  */
+    // res.render("dashboard.ejs", { UserFirstname: req.user });
   } else {
     res.redirect("/login");
   }
@@ -204,6 +275,8 @@ passport.use(
                 console.log(result[a].email);
                 console.log(result[a].password);
                 const user = result[a].email;
+                //const UserFirstname = result[a].firstname;
+                // console.log("passport side " + UserFirstname);
 
                 const match = await bcrypt.compare(
                   password1,

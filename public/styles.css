@@ -1,12 +1,14 @@
 body {
-  font-family: "An Apple", sans-serif;
-  background-color: #5c008a;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #023047;
   background-image: url("https://www.transparenttextures.com/patterns/black-linen.png");
   color: white;
 }
 
 nav {
-  background-color: #5c008a;
+  background-color: #023047;
 }
 
 main {
@@ -20,4 +22,16 @@ footer {
 
 .country {
   width: 190px !important;
+}
+
+.logout {
+  float: right;
+}
+
+.avatar {
+  vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: aliceblue;
 }

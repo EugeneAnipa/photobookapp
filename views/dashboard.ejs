@@ -1,18 +1,47 @@
-<%- include('header'); -%>
+<!DOCTYPE html>
 
+
+<html>
+<head>
+<meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     
+
+<title>ThePhotoBookApp</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&family=Anton&family=Bacasime+Antique&family=Bebas+Neue&family=Belanosima:wght@600&family=Caprasimo&family=Inter&family=Josefin+Sans:wght@500&family=Kanit:wght@500&family=Lato:wght@300&family=Martian+Mono:wght@300;400;500;600;700;800&family=Noto+Sans:ital,wght@0,300;0,500;1,200;1,400&family=Noto+Serif:wght@700&family=Open+Sans:wght@400;600&family=Oswald:wght@300;500&family=Pacifico&family=Permanent+Marker&family=Prompt:wght@200&family=Roboto+Mono:wght@300&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,100;1,400;1,500&display=swap" rel="stylesheet">
+                
+<link rel="stylesheet" href="/styles.css">
+ 
+</head>
+
+<body>
+<header>
+<h1>Welcome <%= UserEmail %>  ,<%= UserFirstname %></h1>
+<nav class="nav justify-content-center">
+
+  <img src="<%= UserAvatar %>" alt="Avatar" class="avatar">
+  
+</nav>
+<form class="logout" action="/logout" method="POST">
+<button>&#8861;</button>
+
+
+</form>
+</header>
+<div class="justify-content-center" text-center><button>Add</button></div>
 
 
 
 <main>
+<img src="" class="img-fluid" alt="Responsive image">
 
-<h1>Welcome </h1><br>
+</main>
 
-<span>Here is our beautiful Appp <%= UserMail %>  </span></main>
-<form action="/logout" method="POST">
-<button>Logout</button>
-
-
-</form>
 
 
 
