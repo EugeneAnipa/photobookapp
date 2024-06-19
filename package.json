@@ -17,6 +17,7 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
     "nocache": "^4.0.0",
     "passport": "^0.7.0",

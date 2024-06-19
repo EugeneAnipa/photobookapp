@@ -14,6 +14,7 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import session from "express-session";
 import nocache from "nocache";
+import multer from "multer";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -54,13 +55,79 @@ const loginappdb = mysql.createConnection({
 });
 loginappdb.connect();
 
+var seecret = "Eq5mQpc2JHG8dwOlnMFdrXvV6HU";
 cloudinary.config({
   cloud_name: "da7nhb6yj",
   api_key: "169418963869343",
-  api_secret: "Eq5mQpc2JHG8dwOlnMFdrXvV6HUT",
+  api_secret: seecret,
   secure: true,
 });
 
+//CLOUDINARY_URL=cloudinary://169418963869343:Eq5mQpc2JHG8dwOlnMFdrXvV6HU@da7nhb6yj
+//Eq5mQpc2JHG8dwOlnMFdrXvV6HU
+const upload = multer();
+
+//after the make app post profile a function, app dot use it , then call it dashboard
+//you get document query selector and update the profile photo when changed and not the whole page rendering to change
+app.post("/profile", upload.single("avatar"), async function (req, res) {
+  // Upload an image
+
+  console.log(req.file);
+  var tyfile = req.file;
+  console.log(typeof tyfile);
+  console.log("email here " + req.user);
+  /****************** */
+  const uploadResult = cloudinary.uploader
+    .upload_stream(
+      {
+        resource_type: "image",
+        asset_folder: "profilephotos",
+        public_id: req.user + "_" + "avatar",
+        overwrite: true,
+        unique_filename: true,
+      },
+      function (error, result) {
+        console.log(error);
+        console.log(result);
+
+        var secureUrlSQL = "UPDATE login SET avatar= ?  WHERE email = ? ";
+        loginappdb.query(
+          secureUrlSQL,
+          [result.secure_url, req.user],
+          function (err, inREsult) {
+            console.log("secure url inserted");
+          }
+        );
+      }
+    )
+    .end(req.file.buffer);
+
+  res.send("complete");
+
+  /**************************  */
+  /*
+  //the below code is to upload image via a url link , so you change req.file to the url
+  const uploadResult = await cloudinary.uploader
+    .upload(req.file, {
+      resource_type: "image",
+      asset_folder: "profilephotos",
+      public_id: req.user + "avatar",
+      overwrite: true,
+      unique_filename: true,
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  res.send("complete");
+  console.log(uploadResult);
+  */
+  //save the imageurl to db
+  // var imageurl = json(uploadResult.secure_url);
+  //console.log(imageurl);
+});
+
+app.post("/addphoto", function (req, res) {});
 app.get("/login", (req, res) => {
   console.log("this is the post login details" + req.match, req.user);
   res.render("login.ejs");
@@ -75,12 +142,12 @@ app.get("/dashboard", (req, res) => {
     var hereUSerSql = "SELECT * FROM login WHERE email = ?";
     var imageSql = "SELECT * FROM imagephotos WHERE email = ?";
     var displayResultSql =
-      "SELECT login.email,login.firstname,login.avatar,imagephotos.photos  FROM login INNER JOIN imagephotos ON login.email=imagephotos.email;";
+      " SELECT login.email AS email,login.firstname as firstname ,login.avatar as avatar,imagephotos.photos as photos  FROM login INNER JOIN imagephotos ON login.email=imagephotos.email WHERE login.email= ? ";
 
     console.log("here is the email" + req.user);
     console.log("here is hereUser " + hereUSer);
 
-    loginappdb.query(displayResultSql, [hereUSer], function (err, imageResult) {
+    loginappdb.query(hereUSerSql, [hereUSer], function (err, imageResult) {
       for (let a = 0; a < imageResult.length; a++) {
         /*
                  if(err) {
@@ -91,32 +158,24 @@ app.get("/dashboard", (req, res) => {
               
             res.json(results);
           }
-
+              
 
           */
-
+        var useUrl = imageResult[a].avatar;
+        var idgetter = "profilephotos/" + req.user + "_avatar";
         // Optimize delivery by resizing and applying auto-format and auto-quality
-        const optimizeUrl = cloudinary.url("shoes", {
-          fetch_format: "auto",
+        const optimizeUrl = cloudinary.url(idgetter, {
+          fetch_format: "image",
           quality: "auto",
         });
-        console.log("cloudinary is " + optimizeUrl);
+        console.log(optimizeUrl);
         console.log("for loop firstname " + imageResult[a].firstname);
         console.log("for loop email " + imageResult[a].email);
         console.log("for loop avatar " + imageResult[a].avatar);
-        console.log("for loop photos " + imageResult[a].photos);
-        var imageObject = Object.keys(imageResult[a].avatar).forEach(function (
-          key
-        ) {
-          var row = imageResult[a].avatar[key];
-          return row.avatar;
-        });
-
-        console.log(imageObject);
         res.render("dashboard.ejs", {
           UserEmail: imageResult[a].email,
           UserFirstname: imageResult[a].firstname,
-          UserAvatar: optimizeUrl,
+          UserAvatar: useUrl,
         });
       }
     });
@@ -344,6 +403,8 @@ passport.deserializeUser((user, cb) => {
   cb(null, user);
 });
 console.log(passport);
+console.log(cloudinary);
+console.log(upload);
 
 /* -------------------------------               ------------------------ */
 
