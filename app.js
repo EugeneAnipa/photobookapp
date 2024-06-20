@@ -127,7 +127,31 @@ app.post("/profile", upload.single("avatar"), async function (req, res) {
   //console.log(imageurl);
 });
 
-app.post("/addphoto", function (req, res) {});
+app.post("/addphoto", upload.single("photo"), function (req, res) {
+  const photoUpload = cloudinary.uploader
+    .upload_stream(
+      {
+        resource_type: "image",
+        asset_folder: "displayphotos",
+
+        unique_filename: true,
+        public_id: req.body.photoname,
+      },
+      function (error, result) {
+        console.log(error);
+        console.log(result);
+
+        loginappdb.query(
+          "INSERT INTO imagephotos(photos) Values(?) WHERE email = ? ",
+          [result.secure_url, req.user],
+          function (err, inREsult) {
+            console.log("photo secure url inserted");
+          }
+        );
+      }
+    )
+    .end(req.file.buffer);
+});
 app.get("/login", (req, res) => {
   console.log("this is the post login details" + req.match, req.user);
   res.render("login.ejs");
