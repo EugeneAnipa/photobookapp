@@ -46,6 +46,40 @@
 
 <img src="" class="img-fluid" alt="Responsive image">
 
+
+
+
+<!---->
+<!---->
+
+ <%locals.displayPhotos %>
+<!---->
+<!---->
+<div class="justify-content-centre">
+<h2 class="text-centre">Display photos</h2>
+ <ul><% for (var i=0;i< displayPhotos.length;i++){ %>         
+   <li><%= displayPhotos[i] %></li>       
+            <%}%>     
+
+
+
+
+</ul>
+</div>
+<!---->
+<!---->
+<div class="container">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
+  <% for (var a=0;i<displayPhotos.length;a++){ %>      
+    <img src="<%= displayPhotos[a] %>" class="col" alt="<!--put photo name here-->"></img> 
+    
+  </div>  <%}%>     
+</div>
+<!---->
+
+<!---->
+
+
 </main>
 
 

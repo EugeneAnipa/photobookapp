@@ -1,5 +1,5 @@
 /* -------------------------------      Photobook app         ------------------------ */
-import express from "express";
+import express, { query } from "express";
 import bodyParser from "body-parser";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -142,7 +142,7 @@ app.post("/addphoto", upload.single("photo"), function (req, res) {
         console.log(result);
 
         loginappdb.query(
-          "INSERT INTO imagephotos(photos) Values(?) WHERE email = ? ",
+          "INSERT INTO imagephotos(photos,email) Values(?,?)",
           [result.secure_url, req.user],
           function (err, inREsult) {
             console.log("photo secure url inserted");
@@ -151,6 +151,7 @@ app.post("/addphoto", upload.single("photo"), function (req, res) {
       }
     )
     .end(req.file.buffer);
+  res.send("photo added");
 });
 app.get("/login", (req, res) => {
   console.log("this is the post login details" + req.match, req.user);
@@ -167,43 +168,130 @@ app.get("/dashboard", (req, res) => {
     var imageSql = "SELECT * FROM imagephotos WHERE email = ?";
     var displayResultSql =
       " SELECT login.email AS email,login.firstname as firstname ,login.avatar as avatar,imagephotos.photos as photos  FROM login INNER JOIN imagephotos ON login.email=imagephotos.email WHERE login.email= ? ";
-
+    var bothProfileandAddPhotos =
+      "SELECT * FROM login INNER JOIN imagephotos ON login.email=imagephotos.email WHERE login.email = ? ";
     console.log("here is the email" + req.user);
     console.log("here is hereUser " + hereUSer);
+
+    //the sql is supposed to select single values for the email ,first name n co but only photos, it selects all but yours is wrong
+    // so you have to use two querries ,try making it a function and return photos and pull it out like that
+    /*           for only promise test                 */
+    /*           for only promise test                 */
+
+    /*           for only promise test                 */
+    /*           for only promise test                 */
 
     loginappdb.query(hereUSerSql, [hereUSer], function (err, imageResult) {
       for (let a = 0; a < imageResult.length; a++) {
         /*
-                 if(err) {
-            res.status(500).end();
-          } else if (results.length === 0) {
-            res.status(404).end();
-          } else {
-              
-            res.json(results);
-          }
-              
+        if (err) {
+          res.status(500).end();
+        } else if (results.length === 0) {
+          res.status(404).end();
+        } else {
+          res.json(results);
+        }
+            */
 
-          */
         var useUrl = imageResult[a].avatar;
+
         var idgetter = "profilephotos/" + req.user + "_avatar";
         // Optimize delivery by resizing and applying auto-format and auto-quality
+
         const optimizeUrl = cloudinary.url(idgetter, {
           fetch_format: "image",
           quality: "auto",
         });
         console.log(optimizeUrl);
+
         console.log("for loop firstname " + imageResult[a].firstname);
         console.log("for loop email " + imageResult[a].email);
         console.log("for loop avatar " + imageResult[a].avatar);
+
+        console.log("for loop avatar " + imageResult[a].photos);
+
+        //check below how to display all images from cloudinary or only images related to req.user
+        /*
+          var displayPhotosGetter = "displayphotos" + req.user;
+          const optimizeUrlDisplayPhotos = cloudinary.url(displayPhotosGetter, {
+            fetch_format: "image",
+            quality: "auto",
+          });
+          console.log(optimizeUrlDisplayPhotos);
+                      */
+
+        loginappdb.query(
+          "SELECT photos FROM imagephotos WHERE email = ? ",
+          [req.user],
+          function (err, photoResult) {
+            for (var b = 0; b < photoResult.length; b++) {
+              console.log("photo results here b " + photoResult[b].photos);
+              //
+
+              //res.locals.displayPhotos = photoResult[b].photos;
+            }
+          }
+        );
+        /* 
+
+        */
+        //res.locals.UserEmail = imageResult[a].email;
+        /* 
+
+        */
+
+        // try again using sql union statement to query then return results then display
+        /* 
+
+        */
+        /*
         res.render("dashboard.ejs", {
-          UserEmail: imageResult[a].email,
           UserFirstname: imageResult[a].firstname,
           UserAvatar: useUrl,
-        });
+          displayPhotos: imageResult[a],
+        });  
+
+        */
+
+        /* 
+
+        */
       }
     });
 
+    /*    tryinging with promises all   */
+    const Sqlone1 = loginappdb.query(
+      hereUSerSql,
+      [hereUSer],
+      function (err, imageResult) {
+        for (var a = 0; a < imageResult.length; a++) {
+          console.log(imageResult[a].email);
+          console.log(imageResult[a].firstname);
+          console.log(imageResult[a].avatar);
+        }
+      }
+    );
+    const Sqltwo2 = loginappdb.query(
+      "SELECT photos FROM imagephotos WHERE email = ? ",
+      [req.user],
+      function (err, photoResult) {
+        for (var b = 0; b < photoResult.length; b++) {
+          console.log(photoResult[b].photos);
+        }
+      }
+    );
+
+    Promise.all([Sqlone1, Sqltwo2]).then((imageResult, photoResult) => {
+      res.render("dashboard.ejs", {
+        UserFirstname: imageResult.firstname,
+        UserAvatar: imageResult.avatar,
+        UserEmail: imageResult.email,
+        displayPhotos: photoResult.photos,
+      });
+    });
+    /*    tryinging with promises all   */
+
+    //displayPhotos: imageResult[a].photos,
     /*
 
     loginappdb.query(imageSql, [hereUSer], function (err, imageResult) {
@@ -235,6 +323,9 @@ app.get("/dashboard", (req, res) => {
     });
   */
     // res.render("dashboard.ejs", { UserFirstname: req.user });
+
+    /*  */
+    /*   */
   } else {
     res.redirect("/login");
   }
