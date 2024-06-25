@@ -244,14 +244,13 @@ app.get("/dashboard", (req, res) => {
         /* 
 
         */
-        /*
+        // if req.user is getting the email here , why still trying to query to display it ? fucktard !
         res.render("dashboard.ejs", {
           UserFirstname: imageResult[a].firstname,
           UserAvatar: useUrl,
+          UserEmail: imageResult[a].email,
           displayPhotos: imageResult[a],
-        });  
-
-        */
+        });
 
         /* 
 
@@ -260,6 +259,7 @@ app.get("/dashboard", (req, res) => {
     });
 
     /*    tryinging with promises all   */
+    /*
     const Sqlone1 = loginappdb.query(
       hereUSerSql,
       [hereUSer],
@@ -289,6 +289,9 @@ app.get("/dashboard", (req, res) => {
         displayPhotos: photoResult.photos,
       });
     });
+
+
+    */
     /*    tryinging with promises all   */
 
     //displayPhotos: imageResult[a].photos,

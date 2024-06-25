@@ -25,7 +25,7 @@ footer {
 }
 
 .logout {
-  float: right;
+  float: right !important;
 }
 
 .avatar {
