@@ -69,6 +69,7 @@ const upload = multer();
 
 //after the make app post profile a function, app dot use it , then call it dashboard
 //you get document query selector and update the profile photo when changed and not the whole page rendering to change
+
 app.post("/profile", upload.single("avatar"), async function (req, res) {
   // Upload an image
 
@@ -158,6 +159,41 @@ app.get("/login", (req, res) => {
   res.render("login.ejs");
 });
 
+function queryInfo(req, res, next) {
+  loginappdb.query(
+    "SELECT * FROM login WHERE email = ? ",
+    [req.user],
+    function (err, imageResult) {
+      for (let a = 0; a < imageResult.length; a++) {
+        console.log("new func " + imageResult[a].email);
+        console.log("new func " + imageResult[a].avatar);
+        console.log("new func " + imageResult[a].firstname);
+        return [
+          imageResult[a].email,
+          imageResult[a].avatar,
+          imageResult[a].firstname,
+        ];
+      }
+      next();
+    }
+  );
+}
+
+function queryPhotos(req, res, next) {
+  loginappdb.query(
+    "SELECT photos FROM imagephotos WHERE email = ? ",
+    [req.user],
+    function (err, photoResult) {
+      for (let b = 0; b < photoResult.length; b++) {
+        console.log("new func " + photoResult[b]);
+        return photoResult[b].photos;
+      }
+      next();
+    }
+  );
+}
+app.use(queryInfo);
+app.use(queryPhotos);
 app.get("/dashboard", (req, res) => {
   console.log(" dashboard to work with " + req.user);
   //res.render("/dashboard.ejs");
@@ -172,6 +208,12 @@ app.get("/dashboard", (req, res) => {
       "SELECT * FROM login INNER JOIN imagephotos ON login.email=imagephotos.email WHERE login.email = ? ";
     console.log("here is the email" + req.user);
     console.log("here is hereUser " + hereUSer);
+    /*      calling the global functions to test        */
+
+    console.log(queryInfo());
+    console.log(queryPhotos());
+
+    /*    end of  calling the global functions to test        */
 
     //the sql is supposed to select single values for the email ,first name n co but only photos, it selects all but yours is wrong
     // so you have to use two querries ,try making it a function and return photos and pull it out like that
@@ -228,7 +270,7 @@ app.get("/dashboard", (req, res) => {
               console.log("photo results here b " + photoResult[b].photos);
               //
 
-              //res.locals.displayPhotos = photoResult[b].photos;
+              res.locals.displayPhotos = photoResult[b].photos;
             }
           }
         );
@@ -245,6 +287,7 @@ app.get("/dashboard", (req, res) => {
 
         */
         // if req.user is getting the email here , why still trying to query to display it ? fucktard !
+
         res.render("dashboard.ejs", {
           UserFirstname: imageResult[a].firstname,
           UserAvatar: useUrl,

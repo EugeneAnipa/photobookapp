@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <title>Admin Dashboard</title>
+    <style>
+      body {
+        background-color: brown;
+      }
+      .mother {
+        background-color: black;
+        background-size: 100%;
+        width: 100%;
+      }
+
+      .space {
+        margin-bottom: 0;
+        height: 100%;
+      }
+
+      footer {
+        position: absolute;
+        background-color: blanchedalmond;
+        bottom: 0;
+        position: fixed;
+        width: 100%;
+      }
+
+      .kontainer {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        grid-auto-rows: minmax(100px, auto);
+        position: relative;
+      }
+
+      .one {
+        grid-column: 1/3;
+        grid-row: 1;
+        background-color: bisque;
+        bottom: 0;
+      }
+      .two {
+        grid-column: 2/4;
+        grid-row: 1/3;
+        background-color: chocolate;
+      }
+
+      .three {
+        grid-column: 1;
+        grid-row: 3/5;
+        background-color: rgb(80, 190, 80);
+        bottom: 0;
+        top: 0;
+        height: 90% !important;
+      }
+      .three2 {
+        grid-column: 1;
+        grid-row: 4/5;
+        background-color: rgb(1, 1, 15);
+        bottom: 0;
+        top: 0;
+        height: 90% !important;
+      }
+
+      .four {
+        grid-column: 3;
+        grid-row: 3;
+        background-color: azure;
+      }
+      .five {
+        grid-column: 2;
+        grid-row: 4;
+        background-color: cornflowerblue;
+      }
+      .six {
+        grid-column: 3;
+        grid-row: 4;
+        background-color: cyan;
+      }
+      .seven {
+        grid-column: 1;
+        grid-row: 5;
+        background-color: cyan;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="nav mother"><h3 class="center-block">DashBoard</h3></div>
+
+      <div class="row">
+        <div class="col-sm-4 space" style="background-color: burlywood">
+          col-sm-4
+        </div>
+        <div class="col-sm-8 space" style="background-color: azure">
+          col-sm-8
+        </div>
+      </div>
+      <div class="kontainer">
+        <div class="one">one</div>
+        <div class="two">two</div>
+        <div class="three" style="height: 15%">three</div>
+
+        <div class="three2" style="height: 15%">three2</div>
+
+        <div class="four">four</div>
+        <div class="five">five</div>
+        <div class="six">six</div>
+        <div class="seven">seven</div>
+      </div>
+
+      <footer class="footer"><h3 class="center-block">Footer</h3></footer>
+    </main>
+  </body>
+  <script></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+</html>
