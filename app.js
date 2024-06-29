@@ -192,8 +192,9 @@ function queryPhotos(req, res, next) {
     }
   );
 }
-app.use(queryInfo);
-app.use(queryPhotos);
+//app.use(queryInfo);
+//app.use(queryPhotos);
+
 app.get("/dashboard", (req, res) => {
   console.log(" dashboard to work with " + req.user);
   //res.render("/dashboard.ejs");
@@ -210,8 +211,8 @@ app.get("/dashboard", (req, res) => {
     console.log("here is hereUser " + hereUSer);
     /*      calling the global functions to test        */
 
-    console.log(queryInfo());
-    console.log(queryPhotos());
+    //console.log(queryInfo());
+    //console.log(queryPhotos());
 
     /*    end of  calling the global functions to test        */
 
@@ -268,12 +269,18 @@ app.get("/dashboard", (req, res) => {
           function (err, photoResult) {
             for (var b = 0; b < photoResult.length; b++) {
               console.log("photo results here b " + photoResult[b].photos);
+
               //
 
-              res.locals.displayPhotos = photoResult[b].photos;
+              //res.locals.displayPhotos = photoResult[b].photos;
+
+              /* */
+
+              /* */
             }
           }
         );
+
         /* 
 
         */
@@ -287,14 +294,15 @@ app.get("/dashboard", (req, res) => {
 
         */
         // if req.user is getting the email here , why still trying to query to display it ? fucktard !
-
+        /*
         res.render("dashboard.ejs", {
           UserFirstname: imageResult[a].firstname,
           UserAvatar: useUrl,
           UserEmail: imageResult[a].email,
-          displayPhotos: imageResult[a],
+          displayPhotos: photoResult[b].photos,
+         
         });
-
+             */
         /* 
 
         */
@@ -302,7 +310,7 @@ app.get("/dashboard", (req, res) => {
     });
 
     /*    tryinging with promises all   */
-    /*
+
     const Sqlone1 = loginappdb.query(
       hereUSerSql,
       [hereUSer],
@@ -324,17 +332,13 @@ app.get("/dashboard", (req, res) => {
       }
     );
 
-    Promise.all([Sqlone1, Sqltwo2]).then((imageResult, photoResult) => {
-      res.render("dashboard.ejs", {
-        UserFirstname: imageResult.firstname,
-        UserAvatar: imageResult.avatar,
-        UserEmail: imageResult.email,
-        displayPhotos: photoResult.photos,
-      });
+    res.render("dashboard.ejs", {
+      UserFirstname: Sqlone1.firstname,
+      UserAvatar: Sqlone1.avatar,
+      UserEmail: Sqlone1.email,
+      displayPhotos: Sqltwo2.photos,
     });
 
-
-    */
     /*    tryinging with promises all   */
 
     //displayPhotos: imageResult[a].photos,
@@ -452,7 +456,9 @@ app.post("/signup", async (req, res) => {
 /*    ++++++++++++++++++++++++++++++++++++ */
 
 /*++++++++++++++++++++++++++++++++++ */
-
+app.get("/logout", function (req, res) {
+  res.redirect("/login");
+});
 app.post("/logout", function (req, res, next) {
   res.clearCookie("connect.sid");
   req.logout(function (err) {
@@ -587,6 +593,6 @@ console.log(upload);
 
 /* -------------------------------               ------------------------ */
 
-app.listen(3000, () => {
-  console.log("server is running on 3000");
+app.listen(8000, () => {
+  console.log("server is running on 8000");
 });
