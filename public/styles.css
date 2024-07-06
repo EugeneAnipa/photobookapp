@@ -35,3 +35,9 @@ footer {
   border-radius: 50%;
   color: aliceblue;
 }
+
+.displayPhotos {
+  padding: 5px 5px 5px 5px;
+  border: 5px 5px 5px 5px;
+  margin: 5px 5px 5px 5px;
+}

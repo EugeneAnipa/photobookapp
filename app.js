@@ -114,7 +114,7 @@ app.post("/profile", upload.single("avatar"), async function (req, res) {
     )
     .end(req.file.buffer);
 
-  res.send("complete");
+  res.redirect("/dashboard");
 
   /**************************  */
   /*
@@ -139,6 +139,7 @@ app.post("/profile", upload.single("avatar"), async function (req, res) {
   //console.log(imageurl);
 });
 
+//bug alert!! on the frontend, when you click on add photo, without uploading, it takes you an error thats says can not read buffer, so you have write a code, if buffer empty, redirects to dashboard, or easy way , just solve it at the frontend by placing the required html attribute for both the profile photo and adding photos
 app.post("/addphoto", upload.single("photo"), function (req, res) {
   const photoUpload = cloudinary.uploader
     .upload_stream(
@@ -163,7 +164,7 @@ app.post("/addphoto", upload.single("photo"), function (req, res) {
       }
     )
     .end(req.file.buffer);
-  res.send("photo added");
+  res.redirect("/dashboard");
 });
 app.get("/login", (req, res) => {
   console.log("this is the post login details" + req.match, req.user);
@@ -238,24 +239,34 @@ app.get("/dashboard", async function (req, res) {
     /**mysql2 try and catch block */
     try {
       const [rows] = await loginappdb2.query(
-        "SELECT * FROM login WHERE email = 'me2@i.com'"
+        "SELECT * FROM login WHERE email = ?",
+        [req.user]
       );
       const [photoresult] = await loginappdb2.query(
-        "SELECT * FROM login WHERE email = 'me2@i.com'"
+        "SELECT photos FROM imagephotos WHERE email = ?",
+        [req.user]
       );
       // var rowLoop = for(let a =0; a<rows)
+      //console.log(rows[0].firstname);
       console.log(rows[0].firstname);
-      res.send(rows[0].firstname);
+      //console.log(photoresult);
+      res.locals.displayPhotos = photoresult;
+      for (let a = 0; a < photoresult.length; a++) {
+        console.log(photoresult[a].photos);
+        // res.locals.displayPhotos = photoresult[a].photos;
+      }
 
-      const phototest = photoresult.map((photos) => {
-        //console.log(photos);
+      //res.send(rows[0].firstname);
+
+      res.render("dashboard.ejs", {
+        UserAvatar: rows[0].avatar,
+        UserEmail: rows[0].email,
+        UserFirstname: rows[0].firstname,
       });
-
-      console.log(phototest);
     } catch (err) {
       console.log(err);
     } finally {
-      loginappdb2.close();
+      // loginappdb2.close();
     }
 
     /**mysql2 try and catch block */
@@ -322,6 +333,16 @@ app.post("/signup", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+});
+
+app.delete("/", function (req, res) {
+  loginappdb.query(
+    "DELETE FROM imagephotos(email) Values(?)",
+    [req.user],
+    function (err, delResult) {
+      console.log("photo deleted");
+    }
+  );
 });
 /*
 

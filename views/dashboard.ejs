@@ -45,32 +45,35 @@
 
 
 </header>
-<div class="justify-content-center" text-center><form method="post" action="/profile" enctype="multipart/form-data" id="form"><input type="file" name="avatar" ><br><br> <input type="submit" value="Change Profile photo"></form></div>
+<div class="justify-content-center" text-center><form method="post" action="/profile" enctype="multipart/form-data" id="form"><input type="file" name="avatar" required><br><br> <input type="submit" value="Change Profile photo"></form></div>
 
 
 
 <main>
-<div class="justify-content-center" text-center><form method="post" action="/addphoto" enctype="multipart/form-data" id="form"><input type="file" name="photo" ><br><br> 
-<input name="photoname" placeholder="name of photo" type="text"><br><br> 
+<div class="justify-content-center" text-center><form method="post" action="/addphoto" enctype="multipart/form-data" id="form"><input type="file" name="photo" required><br><br> 
+<br><br> 
 
 <input type="submit" value="Add photo"></form></div>
 
-<img src="" class="img-fluid" alt="Responsive image">
+
 
 
 
 
 <!---->
 <!---->
-<!--
- <%locals.displayPhotos %>  -->
+
+ <%locals.displayPhotos %>  
+
+ 
 <!---->
 <!---->
-<!--
+
 <div class="justify-content-centre">
 <h2 class="text-centre">Display photos</h2>
- <ul><% for (var i=0;i< displayPhotos.length;i++){ %>         
-   <li><%= displayPhotos[i] %></li>       
+ <ul><% for (var i=0;i< locals.displayPhotos.length;i++){ %>         
+  <!-- <li><%= locals.displayPhotos[i].photos %></li> -->
+   <img class="displayPhotos" src="<%= locals.displayPhotos[i].photos %>"><a href="" action="" method="delete"><i class="bi bi-trash"></i></a>      
             <%}%>     
 
 
@@ -78,18 +81,10 @@
 
 </ul>
 </div>
--->
+
 <!---->
 <!---->
-<!--
-<div class="container">
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
-  <% for (var a=0;i<displayPhotos.length;a++){ %>      
-    <img src="<%= displayPhotos[a] %>" class="col" alt="<!--put photo name here-->"></img> 
-    
-  </div>  <%}%>     
-</div>
--->
+
 <!---->
 
 <!---->
