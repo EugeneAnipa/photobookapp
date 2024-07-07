@@ -155,8 +155,8 @@ app.post("/addphoto", upload.single("photo"), function (req, res) {
         console.log(result);
 
         loginappdb.query(
-          "INSERT INTO imagephotos(photos,email) Values(?,?)",
-          [result.secure_url, req.user],
+          "INSERT INTO imagephotos(photos,email,publicid) Values(?,?,?)",
+          [result.secure_url, req.user, req.body.photoname],
           function (err, inREsult) {
             console.log("photo secure url inserted");
           }
@@ -243,7 +243,7 @@ app.get("/dashboard", async function (req, res) {
         [req.user]
       );
       const [photoresult] = await loginappdb2.query(
-        "SELECT photos FROM imagephotos WHERE email = ?",
+        "SELECT * FROM imagephotos WHERE email = ?",
         [req.user]
       );
       // var rowLoop = for(let a =0; a<rows)
@@ -335,14 +335,41 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.delete("/", function (req, res) {
-  loginappdb.query(
-    "DELETE FROM imagephotos(email) Values(?)",
-    [req.user],
-    function (err, delResult) {
-      console.log("photo deleted");
-    }
+app.post("/delete/:id", async function (req, res) {
+  //try getting the value thus url and pass in to delete
+  //if that how do you delete in db without the id ?
+  //get id from the frontend value,then query select db to get da url,
+  //then pass that url to cloudinary to destroy,then use the id to
+  // from db now
+
+  const value = req.params.id;
+  console.log("this is " + value);
+
+  const [publicidSelect] = await loginappdb2.query(
+    "SELECT * from imagephotos WHERE email = ? AND ID = ?",
+    [req.user, value]
   );
+  console.log(" url here  " + publicidSelect[0].publicid);
+  const publicidSelected = publicidSelect[0].publicid;
+  /*
+  cloudinary.v2.api
+    .delete_resources(["ohqaubdln9isze7nlwof"], {
+      type: "upload",
+      resource_type: "image",
+    })
+    .then(console.log);
+*/
+
+  cloudinary.uploader
+    .destroy(publicidSelected, { asset_folder: "displayphotos" })
+    .then((result) => console.log(result));
+
+  const deLete = await loginappdb2.query(
+    "DELETE FROM imagephotos WHERE email =?  AND ID=?;",
+    [req.user, value]
+  );
+
+  res.redirect("/dashboard");
 });
 /*
 

@@ -51,6 +51,7 @@
 
 <main>
 <div class="justify-content-center" text-center><form method="post" action="/addphoto" enctype="multipart/form-data" id="form"><input type="file" name="photo" required><br><br> 
+<input type="text" name="photoname" required>
 <br><br> 
 
 <input type="submit" value="Add photo"></form></div>
@@ -68,12 +69,19 @@
  
 <!---->
 <!---->
-
+<!--change a to a form-->
 <div class="justify-content-centre">
 <h2 class="text-centre">Display photos</h2>
- <ul><% for (var i=0;i< locals.displayPhotos.length;i++){ %>         
-  <!-- <li><%= locals.displayPhotos[i].photos %></li> -->
-   <img class="displayPhotos" src="<%= locals.displayPhotos[i].photos %>"><a href="" action="" method="delete"><i class="bi bi-trash"></i></a>      
+
+ <ul>
+ 
+ <% for (var i=0;i< locals.displayPhotos.length;i++){ %>  
+<form  action="/delete/<%= locals.displayPhotos[i].ID %>" method="Post">
+
+  <button type="submit" class="bi bi-trash" value="submit">
+  
+   <img value="<%= locals.displayPhotos[i].ID %>" class="displayPhotos" src="<%= locals.displayPhotos[i].photos %>"> <br><br> 
+       </form>
             <%}%>     
 
 
@@ -84,11 +92,15 @@
 
 <!---->
 <!---->
-
+<form  action="/delete" method="delete">
+<button type="submit" class="bi bi-trash" value="submit">
+</form>
 <!---->
 
 <!---->
+<!---->
 
+<!---->
 
 </main>
 
