@@ -1,0 +1,37 @@
+<!--trying to solve the header issue -->
+<%if(locals.login || locals.signup) {%> 
+  <%=
+<header>
+  <nav class="nav justify-content-center">
+    <h1>The PHOTOBooK App</h1>
+  </nav>
+</header>
+%> <% } else if (locals.dashboard ) {%>
+  
+  <%=   <header>
+    <!--names,email output-->
+    <h1>Welcome <%= UserEmail %>  ,<%= UserFirstname %></h1></h1>
+    <!--names,email output-->
+    <!--form to logout-->
+      <form  class="logout float-right" action="/logout" method="POST">
+      
+    <button><i class="bi bi-box-arrow-right"></i></button>
+    
+    
+    </form>
+    <!--form to logout-->
+    <nav class="nav justify-content-center">
+    
+    <div class="text-center">
+     <img src="<%= UserAvatar %>" alt="Avatar" class="avatar"> 
+     </div>
+     <!--<%- UserAvatar %>--> 
+     
+    </nav>
+    
+    
+    </header>   
+    %>       
+    <% }%>
+
+  <!--trying to solve the header issue -->

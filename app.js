@@ -1,7 +1,8 @@
 /* -------------------------------      Photobook app         ------------------------ */
-import express, { query } from "express";
+import "dotenv/config";
+import express from "express";
 import bodyParser from "body-parser";
-import { dirname, format } from "path";
+import { dirname } from "path";
 import { fileURLToPath } from "url";
 import fs from "node:fs";
 
@@ -16,7 +17,6 @@ import { Strategy } from "passport-local";
 import session from "express-session";
 import nocache from "nocache";
 import multer from "multer";
-import { error } from "console";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -35,7 +35,7 @@ const saltRounds = 10;
 
 app.use(
   session({
-    secret: "TOPSECRETWORD",
+    secret: process.env.SESSIONSECRET,
     resave: true,
     saveUninitialized: false,
     cookie: {
@@ -50,26 +50,26 @@ app.use(nocache());
 
 app.set("etag", false);
 const loginappdb = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "loginapp",
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
 });
 loginappdb.connect();
 
 /** mysql2 db */
 const loginappdb2 = await mysql2.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "loginapp",
-  password: "",
+  host: process.env.MYSQL2HOST,
+  user: process.env.MYSQL2USER,
+  database: process.env.MYSQL2DATABSE,
+  password: process.env.MYSQL2PASSWORD,
 });
 /**      mysql2 db */
 
-var seecret = "Eq5mQpc2JHG8dwOlnMFdrXvV6HU";
+var seecret = process.env.CLOUDINARYAPISECRET;
 cloudinary.config({
-  cloud_name: "da7nhb6yj",
-  api_key: "169418963869343",
+  cloud_name: process.env.CLOUDINARYCLOUDNAME,
+  api_key: process.env.CLOUDINARYAPIKEY,
   api_secret: seecret,
   secure: true,
 });
@@ -139,9 +139,14 @@ app.post("/profile", upload.single("avatar"), async function (req, res) {
   //console.log(imageurl);
 });
 
-//bug alert!! on the frontend, when you click on add photo, without uploading, it takes you an error thats says can not read buffer, so you have write a code, if buffer empty, redirects to dashboard, or easy way , just solve it at the frontend by placing the required html attribute for both the profile photo and adding photos
-app.post("/addphoto", upload.single("photo"), function (req, res) {
-  const photoUpload = cloudinary.uploader
+//bug alert!! on the frontend, when you click on add photo, without uploading, it takes you an error thats says can not read buffer, so you have write a code, if buffer empty, redirects to dashboard, or easy way , just solve it at the frontend by placing the required html attribute for both the profile photo and adding photos, html attribute was used, solver here by using try and catch block
+
+app.post("/addphoto", upload.single("photo"), async function (req, res) {
+  //upload.single("photo")
+  //
+  //
+  console.log(req.file.buffer);
+  const photoUpload = await cloudinary.uploader
     .upload_stream(
       {
         resource_type: "image",
@@ -151,8 +156,9 @@ app.post("/addphoto", upload.single("photo"), function (req, res) {
         public_id: req.body.photoname,
       },
       function (error, result) {
+        //2nd parameter is result.
         console.log(error);
-        console.log(result);
+        //console.log(result);
 
         loginappdb.query(
           "INSERT INTO imagephotos(photos,email,publicid) Values(?,?,?)",
@@ -161,13 +167,32 @@ app.post("/addphoto", upload.single("photo"), function (req, res) {
             console.log("photo secure url inserted");
           }
         );
+        //return result;
       }
     )
     .end(req.file.buffer);
+  photoUpload;
+
+  console.log({ ...photoUpload });
+  console.log(photoUpload);
+
   res.redirect("/dashboard");
 });
+
+/**     */
+
+/** */
+
 app.get("/login", (req, res) => {
   console.log("this is the post login details" + req.match, req.user);
+
+  /* res.locals.login = login;
+  
+  
+   trying to solve the header issue
+  **/
+  res.locals.login;
+
   res.render("login.ejs");
 });
 
@@ -185,58 +210,7 @@ app.get("/dashboard", async function (req, res) {
       "SELECT * FROM login INNER JOIN imagephotos ON login.email=imagephotos.email WHERE login.email = ? ";
     console.log("here is the email" + req.user);
     console.log("here is hereUser " + hereUSer);
-    /*      calling the global functions to test        */
 
-    //
-
-    /**** */
-    /*
-    const Sqlone1 = await loginappdb.query(
-      hereUSerSql,
-      [hereUSer],
-      function (err, imageResult) {
-        if (error) throw error;
-        //return imageResult;
-        //console.log(imageResult);
-        for (let a = 0; a < imageResult.length; a++) {
-          //return imageResult[a];
-          // console.log(imageResult[a]);
-        }
-      }
-    );
-
-    const Sqltwo2 = await loginappdb.query(
-      "SELECT photos FROM imagephotos WHERE email = ? ",
-      [req.user],
-      function (err, photoResult) {
-        return photoResult;
-      }
-    );
-     */
-    //console.log(Sqlone1);
-    //loginappdb.end();
-    // console.log(Sqlone1);
-    // console.log({ ...Sqlone1 });
-    // console.log(Sqltwo2);
-
-    /*
-
-    res.render("dashboard.ejs", {
-      UserFirstname: Sqlone1,
-      UserAvatar: Sqlone1,
-      UserEmail: Sqlone1,
-      displayPhotos: Sqltwo2.photos,
-    });
-*/
-    /**** */
-
-    /**** */
-
-    //
-
-    /*** testing async and await */
-
-    /**mysql2 try and catch block */
     try {
       const [rows] = await loginappdb2.query(
         "SELECT * FROM login WHERE email = ?",
@@ -246,17 +220,17 @@ app.get("/dashboard", async function (req, res) {
         "SELECT * FROM imagephotos WHERE email = ?",
         [req.user]
       );
-      // var rowLoop = for(let a =0; a<rows)
-      //console.log(rows[0].firstname);
+
       console.log(rows[0].firstname);
-      //console.log(photoresult);
+
       res.locals.displayPhotos = photoresult;
+
+      res.locals.dashboard;
+
       for (let a = 0; a < photoresult.length; a++) {
         console.log(photoresult[a].photos);
         // res.locals.displayPhotos = photoresult[a].photos;
       }
-
-      //res.send(rows[0].firstname);
 
       res.render("dashboard.ejs", {
         UserAvatar: rows[0].avatar,
@@ -291,6 +265,12 @@ app.get("/dashboard", async function (req, res) {
 /*++++++++++++++++++++++++++++++++++ */
 
 app.get("/signup", (req, res) => {
+  /* res.locals.signup = signup;
+  
+  
+   trying to solve the header issue
+  **/
+  res.locals.signup = signup;
   res.render("signup.ejs");
 });
 
@@ -390,6 +370,7 @@ app.post("/delete/:id", async function (req, res) {
 app.get("/logout", function (req, res) {
   res.redirect("/login");
 });
+
 app.post("/logout", function (req, res, next) {
   res.clearCookie("connect.sid");
   req.logout(function (err) {
@@ -447,7 +428,7 @@ passport.use(
                     return cb(err);
                   } else {
                     return cb(null, user);
-                    console.log(cb);
+                    //console.log(cb);
                   }
                 } else {
                   console.log("wrong password!!");
@@ -501,7 +482,7 @@ passport.deserializeUser((user, cb) => {
   cb(null, user);
 });
 //console.log(passport);
-//console.log(cloudinary);
+console.log(cloudinary);
 //console.log(upload);
 
 /* -------------------------------               ------------------------ */
@@ -523,7 +504,8 @@ passport.deserializeUser((user, cb) => {
 /* -------------------------------               ------------------------ */
 
 /* -------------------------------               ------------------------ */
-
+console.log(bcrypt);
+console.log(passport);
 app.listen(8000, () => {
   console.log("server is running on 8000");
 });
