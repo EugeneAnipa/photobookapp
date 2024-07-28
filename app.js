@@ -25,6 +25,8 @@ var accessLogStream = fs.createWriteStream((__dirname, "access.log"), {
   flags: "a",
 });
 
+//just noticed i did not place the ejs set here, but it was still working
+app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
