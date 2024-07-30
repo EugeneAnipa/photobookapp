@@ -272,7 +272,7 @@ app.get("/signup", (req, res) => {
   
    trying to solve the header issue
   **/
-  res.locals.signup = signup;
+  //res.locals.signup = signup;
   res.render("signup.ejs");
 });
 
