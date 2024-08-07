@@ -201,6 +201,13 @@ app.get("/login", (req, res) => {
 app.get("/dashboard", async function (req, res) {
   console.log(" dashboard to work with " + req.user);
   //res.render("/dashboard.ejs");
+  console.log(req.isUnauthenticated());
+  console.log(req.isAuthenticated());
+  console.log(req.isPaused());
+
+  if (req.isUnauthenticated) {
+    console.log("not login");
+  }
 
   if (req.isAuthenticated()) {
     var hereUSer = req.user;
@@ -246,8 +253,9 @@ app.get("/dashboard", async function (req, res) {
     }
 
     /**mysql2 try and catch block */
-  } else {
+  } else if (req.isUnauthenticated()) {
     res.redirect("/login");
+    console.log("test this wrong login");
   }
 });
 
@@ -458,16 +466,35 @@ passport.use(
 
 /*++++++++++++++++++++++++++++++++++ */
 
+app.get("/failureLogger", function (req, res) {
+  if (req.isUnauthenticated()) {
+    // set timer function here maybe at the front end
+    res.locals.Wrong = "Wrong Login details";
+    res.render("login");
+  }
+  console.log(req.isAuthenticated());
+  console.log(req.isUnauthenticated());
+});
+
+app.post("/failureLogger", function (req, res) {
+  console.log(req.isAuthenticated());
+  console.log(req.isUnauthenticated());
+});
+
+/*    ++++++++++++++++++++++++++++++++++++ */
+
+/*++++++++++++++++++++++++++++++++++ */
+
 app.post(
   "/login",
 
   passport.authenticate("local", {
     successRedirect: "/dashboard",
-    failureRedirect: "/login",
+    failureRedirect: "/failureLogger",
   }),
   function (req, res) {
     if ("/login") {
-      console.log("this is the post login details" + req.match, req.result);
+      console.log("this is the post login details " + req.match, req.result);
     }
   }
 );
