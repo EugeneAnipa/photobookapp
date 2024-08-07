@@ -467,7 +467,7 @@ passport.use(
 
 /*++++++++++++++++++++++++++++++++++ */
 
-app.get("/failureLogger", function (req, res) {
+app.get("/loginfail", function (req, res) {
   if (req.isUnauthenticated()) {
     // set timer function here maybe at the front end or
     //breadcrumbs to cancel it
@@ -501,7 +501,7 @@ app.post(
 
   passport.authenticate("local", {
     successRedirect: "/dashboard",
-    failureRedirect: "/failureLogger",
+    failureRedirect: "/loginfail",
   }),
   function (req, res) {
     if ("/login") {
