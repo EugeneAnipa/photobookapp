@@ -193,6 +193,7 @@ app.get("/login", (req, res) => {
   
    trying to solve the header issue
   **/
+  res.locals.Wrong = "";
   res.locals.login;
 
   res.render("login.ejs");
@@ -468,18 +469,28 @@ passport.use(
 
 app.get("/failureLogger", function (req, res) {
   if (req.isUnauthenticated()) {
-    // set timer function here maybe at the front end
+    // set timer function here maybe at the front end or
+    //breadcrumbs to cancel it
+    /*
+
     res.locals.Wrong = "Wrong Login details";
     res.render("login");
+    */
+    res.locals.Wrong = "Wrong Login details";
+    let html = `<p  hx-swap="outerHTML" hx-target="this"><%= Wrong %></p>`;
+
+    res.render("login", (err, html) => {
+      res.send(html);
+    });
   }
+
   console.log(req.isAuthenticated());
   console.log(req.isUnauthenticated());
 });
 
-app.post("/failureLogger", function (req, res) {
-  console.log(req.isAuthenticated());
-  console.log(req.isUnauthenticated());
-});
+/*    ++++++++++++++++++++++++++++++++++++ */
+
+/*++++++++++++++++++++++++++++++++++ */
 
 /*    ++++++++++++++++++++++++++++++++++++ */
 
